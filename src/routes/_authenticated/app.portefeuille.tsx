@@ -142,7 +142,7 @@ export function StatusBadge({ status }: { status: string }) {
     approved: { label: "Approuvé", className: "bg-success/10 text-success" },
     rejected: { label: "Rejeté", className: "bg-destructive/10 text-destructive" },
   };
-  const item = map[status] ?? map.pending!;
+  const item = map[status] ?? map["pending"]!;
   return <Badge className={`rounded-full border-0 ${item.className}`}>{item.label}</Badge>;
 }
 
