@@ -1,24 +1,44 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { Logo } from "@/components/Logo";
+import { useAuth } from "@/hooks/useAuth";
+
 export const Route = createFileRoute("/")({
-  component: Index,
+  ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Imo MSN — Loyer, biens et portefeuille" },
+      {
+        name: "description",
+        content: "Accédez à votre espace Imo MSN : loyer, portefeuille, biens et messagerie.",
+      },
+      { property: "og:title", content: "Imo MSN — Loyer, biens et portefeuille" },
+      {
+        property: "og:description",
+        content: "Accédez à votre espace Imo MSN : loyer, portefeuille, biens et messagerie.",
+      },
+    ],
+  }),
+  component: Splash,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Splash() {
+  const { session, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (loading) return;
+    void navigate({ to: session ? "/app" : "/auth", replace: true });
+  }, [session, loading, navigate]);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-gradient-royal">
+      <Logo size={84} />
+      <p className="text-lg font-extrabold tracking-tight text-primary-foreground">
+        Imo<span className="text-success"> MSN</span>
+      </p>
+      <p className="text-xs text-primary-foreground/70">Pure Premium Peace</p>
     </div>
   );
 }
