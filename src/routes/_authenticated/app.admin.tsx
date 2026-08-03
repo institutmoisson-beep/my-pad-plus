@@ -28,6 +28,18 @@ export const Route = createFileRoute("/_authenticated/app/admin")({
 
 type Method = { name: string; details: string };
 
+/** Attaches each row's requester profile by fetching profiles separately —
+ * user_id columns reference auth.users, not public.profiles, so PostgREST
+ * can't auto-embed `profiles:user_id(...)`. */
+async function withRequesterNames<T extends { user_id: string }>(rows: T[]) {
+  if (rows.length === 0) return [] as (T & { profile: { full_name: string } | null })[];
+  const ids = Array.from(new Set(rows.map((r) => r.user_id)));
+  const { data: profs, error } = await supabase.from("profiles").select("id, full_name").in("id", ids);
+  if (error) throw error;
+  const map = new Map((profs ?? []).map((p) => [p.id, p]));
+  return rows.map((r) => ({ ...r, profile: map.get(r.user_id) ?? null }));
+}
+
 function AdminPage() {
   const { data: roles = [], isLoading: rolesLoading } = useRoles();
 
@@ -81,13 +93,13 @@ function DepositsPanel() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-deposits"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: rows, error } = await supabase
         .from("deposit_requests")
-        .select("*, profiles:user_id(full_name)")
+        .select("*")
         .order("created_at", { ascending: false })
         .limit(100);
       if (error) throw error;
-      return data ?? [];
+      return await withRequesterNames(rows ?? []);
     },
   });
 
@@ -109,7 +121,7 @@ function DepositsPanel() {
     <div className="space-y-2">
       {(data ?? []).length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">Aucune demande.</p>}
       {(data ?? []).map((d) => {
-        const prof = d.profiles as unknown as { full_name: string } | null;
+        const prof = d.profile;
         return (
           <div key={d.id} className="rounded-2xl bg-card p-3.5 shadow-soft">
             <div className="flex items-center justify-between">
@@ -162,13 +174,13 @@ function WithdrawalsPanel() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-withdrawals"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: rows, error } = await supabase
         .from("withdrawal_requests")
-        .select("*, profiles:user_id(full_name)")
+        .select("*")
         .order("created_at", { ascending: false })
         .limit(100);
       if (error) throw error;
-      return data ?? [];
+      return await withRequesterNames(rows ?? []);
     },
   });
 
@@ -190,7 +202,7 @@ function WithdrawalsPanel() {
     <div className="space-y-2">
       {(data ?? []).length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">Aucune demande.</p>}
       {(data ?? []).map((w) => {
-        const prof = w.profiles as unknown as { full_name: string } | null;
+        const prof = w.profile;
         return (
           <div key={w.id} className="rounded-2xl bg-card p-3.5 shadow-soft">
             <div className="flex items-center justify-between">
