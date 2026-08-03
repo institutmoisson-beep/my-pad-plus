@@ -10,33 +10,96 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
+import { Route as AuthenticatedAppLierRouteImport } from './routes/_authenticated/app.lier'
+import { Route as AuthenticatedAppLoyerRouteImport } from './routes/_authenticated/app.loyer'
+import { Route as AuthenticatedAppPortefeuilleRouteImport } from './routes/_authenticated/app.portefeuille'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
+  id: '/app/',
+  path: '/app/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppLierRoute = AuthenticatedAppLierRouteImport.update({
+  id: '/app/lier',
+  path: '/app/lier',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppLoyerRoute = AuthenticatedAppLoyerRouteImport.update({
+  id: '/app/loyer',
+  path: '/app/loyer',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppPortefeuilleRoute =
+  AuthenticatedAppPortefeuilleRouteImport.update({
+    id: '/app/portefeuille',
+    path: '/app/portefeuille',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/app/lier': typeof AuthenticatedAppLierRoute
+  '/app/loyer': typeof AuthenticatedAppLoyerRoute
+  '/app/portefeuille': typeof AuthenticatedAppPortefeuilleRoute
+  '/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/app/lier': typeof AuthenticatedAppLierRoute
+  '/app/loyer': typeof AuthenticatedAppLoyerRoute
+  '/app/portefeuille': typeof AuthenticatedAppPortefeuilleRoute
+  '/app': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/app/lier': typeof AuthenticatedAppLierRoute
+  '/_authenticated/app/loyer': typeof AuthenticatedAppLoyerRoute
+  '/_authenticated/app/portefeuille': typeof AuthenticatedAppPortefeuilleRoute
+  '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/auth' | '/app/lier' | '/app/loyer' | '/app/portefeuille' | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/auth' | '/app/lier' | '/app/loyer' | '/app/portefeuille' | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/app/lier'
+    | '/_authenticated/app/loyer'
+    | '/_authenticated/app/portefeuille'
+    | '/_authenticated/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +111,73 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/': {
+      id: '/_authenticated/app/'
+      path: '/app'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/lier': {
+      id: '/_authenticated/app/lier'
+      path: '/app/lier'
+      fullPath: '/app/lier'
+      preLoaderRoute: typeof AuthenticatedAppLierRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/loyer': {
+      id: '/_authenticated/app/loyer'
+      path: '/app/loyer'
+      fullPath: '/app/loyer'
+      preLoaderRoute: typeof AuthenticatedAppLoyerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/portefeuille': {
+      id: '/_authenticated/app/portefeuille'
+      path: '/app/portefeuille'
+      fullPath: '/app/portefeuille'
+      preLoaderRoute: typeof AuthenticatedAppPortefeuilleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppLierRoute: typeof AuthenticatedAppLierRoute
+  AuthenticatedAppLoyerRoute: typeof AuthenticatedAppLoyerRoute
+  AuthenticatedAppPortefeuilleRoute: typeof AuthenticatedAppPortefeuilleRoute
+  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppLierRoute: AuthenticatedAppLierRoute,
+  AuthenticatedAppLoyerRoute: AuthenticatedAppLoyerRoute,
+  AuthenticatedAppPortefeuilleRoute: AuthenticatedAppPortefeuilleRoute,
+  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
