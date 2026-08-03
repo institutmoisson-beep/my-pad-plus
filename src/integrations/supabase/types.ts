@@ -14,16 +14,481 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_settings: {
+        Row: {
+          currency: string
+          id: number
+          payment_methods: Json
+          withdrawal_fee_fixed: number
+          withdrawal_fee_percent: number
+        }
+        Insert: {
+          currency?: string
+          id?: number
+          payment_methods?: Json
+          withdrawal_fee_fixed?: number
+          withdrawal_fee_percent?: number
+        }
+        Update: {
+          currency?: string
+          id?: number
+          payment_methods?: Json
+          withdrawal_fee_fixed?: number
+          withdrawal_fee_percent?: number
+        }
+        Relationships: []
+      }
+      deposit_requests: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          method: string
+          proof_url: string | null
+          reference: string | null
+          status: Database["public"]["Enums"]["request_status"]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          method: string
+          proof_url?: string | null
+          reference?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          method?: string
+          proof_url?: string | null
+          reference?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          attachment_type: string | null
+          attachment_url: string | null
+          body: string | null
+          created_at: string
+          id: string
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          attachment_type?: string | null
+          attachment_url?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          attachment_type?: string | null
+          attachment_url?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          kind: string
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      payout_methods: {
+        Row: {
+          account_name: string | null
+          account_number: string
+          created_at: string
+          id: string
+          network: string
+          user_id: string
+        }
+        Insert: {
+          account_name?: string | null
+          account_number: string
+          created_at?: string
+          id?: string
+          network: string
+          user_id: string
+        }
+        Update: {
+          account_name?: string | null
+          account_number?: string
+          created_at?: string
+          id?: string
+          network?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          biometric_credential: Json | null
+          biometric_enabled: boolean
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          phone: string | null
+          pin_hash: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          biometric_credential?: Json | null
+          biometric_enabled?: boolean
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id: string
+          phone?: string | null
+          pin_hash?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          biometric_credential?: Json | null
+          biometric_enabled?: boolean
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          phone?: string | null
+          pin_hash?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      properties: {
+        Row: {
+          address: string | null
+          city: string | null
+          created_at: string
+          description: string | null
+          district: string | null
+          due_day: number
+          id: string
+          landlord_id: string
+          name: string
+          photos: string[]
+          rent_amount: number
+          type: Database["public"]["Enums"]["property_type"]
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          district?: string | null
+          due_day?: number
+          id?: string
+          landlord_id: string
+          name: string
+          photos?: string[]
+          rent_amount?: number
+          type?: Database["public"]["Enums"]["property_type"]
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          district?: string | null
+          due_day?: number
+          id?: string
+          landlord_id?: string
+          name?: string
+          photos?: string[]
+          rent_amount?: number
+          type?: Database["public"]["Enums"]["property_type"]
+        }
+        Relationships: []
+      }
+      rent_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          landlord_id: string
+          mode: string
+          tenancy_id: string
+          tenant_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          landlord_id: string
+          mode?: string
+          tenancy_id: string
+          tenant_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          landlord_id?: string
+          mode?: string
+          tenancy_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rent_payments_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenancies: {
+        Row: {
+          active: boolean
+          created_at: string
+          cycle_start: string
+          id: string
+          landlord_id: string
+          paid_current_cycle: number
+          property_id: string
+          tenant_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          cycle_start?: string
+          id?: string
+          landlord_id: string
+          paid_current_cycle?: number
+          property_id: string
+          tenant_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          cycle_start?: string
+          id?: string
+          landlord_id?: string
+          paid_current_cycle?: number
+          property_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenancies_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          kind: string
+          label: string | null
+          status: Database["public"]["Enums"]["request_status"]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          kind: string
+          label?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          kind?: string
+          label?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          balance: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawal_requests: {
+        Row: {
+          account_number: string
+          amount: number
+          created_at: string
+          fee: number
+          id: string
+          net_amount: number
+          network: string
+          status: Database["public"]["Enums"]["request_status"]
+          user_id: string
+        }
+        Insert: {
+          account_number: string
+          amount: number
+          created_at?: string
+          fee?: number
+          id?: string
+          net_amount?: number
+          network: string
+          status?: Database["public"]["Enums"]["request_status"]
+          user_id: string
+        }
+        Update: {
+          account_number?: string
+          amount?: number
+          created_at?: string
+          fee?: number
+          id?: string
+          net_amount?: number
+          network?: string
+          status?: Database["public"]["Enums"]["request_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_update_settings: {
+        Args: { _fee_fixed: number; _fee_percent: number; _methods: Json }
+        Returns: undefined
+      }
+      assign_tenant: {
+        Args: { _property_id: string; _tenant_id: string }
+        Returns: string
+      }
+      become_landlord: { Args: never; Returns: undefined }
+      claim_tenancy: { Args: { _property_id: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      pay_rent: {
+        Args: { _amount: number; _mode?: string; _tenancy_id: string }
+        Returns: string
+      }
+      review_deposit: {
+        Args: { _approve: boolean; _id: string }
+        Returns: undefined
+      }
+      review_withdrawal: {
+        Args: { _approve: boolean; _id: string }
+        Returns: undefined
+      }
+      search_users: {
+        Args: { _q: string }
+        Returns: {
+          email: string
+          full_name: string
+          id: string
+          phone: string
+        }[]
+      }
+      set_pin: { Args: { _pin: string }; Returns: undefined }
+      verify_pin: { Args: { _pin: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "landlord" | "tenant" | "user"
+      property_type:
+        | "studio"
+        | "studio_americain"
+        | "2_pieces"
+        | "3_pieces"
+        | "4_pieces"
+        | "villa"
+        | "villa_piscine"
+        | "appart_1"
+        | "appart_2"
+        | "appart_3"
+        | "magasin"
+        | "bureau"
+        | "autre"
+      request_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +615,24 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "landlord", "tenant", "user"],
+      property_type: [
+        "studio",
+        "studio_americain",
+        "2_pieces",
+        "3_pieces",
+        "4_pieces",
+        "villa",
+        "villa_piscine",
+        "appart_1",
+        "appart_2",
+        "appart_3",
+        "magasin",
+        "bureau",
+        "autre",
+      ],
+      request_status: ["pending", "approved", "rejected"],
+    },
   },
 } as const
