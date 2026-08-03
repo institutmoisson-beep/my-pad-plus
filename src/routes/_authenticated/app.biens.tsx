@@ -138,13 +138,21 @@ function PropertyCard({ property }: { property: Property }) {
     queryKey: ["property-tenancies", property.id],
     enabled: expanded,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: rows, error } = await supabase
         .from("tenancies")
-        .select("*, profiles:tenant_id(full_name, phone, email)")
+        .select("*")
         .eq("property_id", property.id)
         .eq("active", true);
       if (error) throw error;
-      return data ?? [];
+      if (!rows || rows.length === 0) return [];
+      const tenantIds = Array.from(new Set(rows.map((r) => r.tenant_id)));
+      const { data: profs, error: perr } = await supabase
+        .from("profiles")
+        .select("id, full_name, phone, email")
+        .in("id", tenantIds);
+      if (perr) throw perr;
+      const profMap = new Map((profs ?? []).map((p) => [p.id, p]));
+      return rows.map((r) => ({ ...r, profile: profMap.get(r.tenant_id) ?? null }));
     },
   });
 
@@ -215,7 +223,7 @@ function PropertyCard({ property }: { property: Property }) {
           {(tenancies ?? []).map((t) => {
             const progress =
               property.rent_amount > 0 ? Math.min(100, (Number(t.paid_current_cycle) / Number(property.rent_amount)) * 100) : 0;
-            const prof = t.profiles as unknown as { full_name: string; phone: string | null; email: string | null } | null;
+            const prof = t.profile;
             return (
               <div key={t.id} className="rounded-2xl bg-muted p-3">
                 <div className="flex items-center justify-between">
