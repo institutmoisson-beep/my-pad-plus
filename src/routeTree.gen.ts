@@ -13,9 +13,13 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
+import { Route as AuthenticatedAppAdminRouteImport } from './routes/_authenticated/app.admin'
+import { Route as AuthenticatedAppBiensRouteImport } from './routes/_authenticated/app.biens'
+import { Route as AuthenticatedAppChatRouteImport } from './routes/_authenticated/app.chat'
 import { Route as AuthenticatedAppLierRouteImport } from './routes/_authenticated/app.lier'
 import { Route as AuthenticatedAppLoyerRouteImport } from './routes/_authenticated/app.loyer'
 import { Route as AuthenticatedAppPortefeuilleRouteImport } from './routes/_authenticated/app.portefeuille'
+import { Route as AuthenticatedAppProfilRouteImport } from './routes/_authenticated/app.profil'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,6 +40,21 @@ const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   path: '/app/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppAdminRoute = AuthenticatedAppAdminRouteImport.update({
+  id: '/app/admin',
+  path: '/app/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppBiensRoute = AuthenticatedAppBiensRouteImport.update({
+  id: '/app/biens',
+  path: '/app/biens',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppChatRoute = AuthenticatedAppChatRouteImport.update({
+  id: '/app/chat',
+  path: '/app/chat',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAppLierRoute = AuthenticatedAppLierRouteImport.update({
   id: '/app/lier',
   path: '/app/lier',
@@ -52,21 +71,34 @@ const AuthenticatedAppPortefeuilleRoute =
     path: '/app/portefeuille',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppProfilRoute = AuthenticatedAppProfilRouteImport.update({
+  id: '/app/profil',
+  path: '/app/profil',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/app/admin': typeof AuthenticatedAppAdminRoute
+  '/app/biens': typeof AuthenticatedAppBiensRoute
+  '/app/chat': typeof AuthenticatedAppChatRoute
   '/app/lier': typeof AuthenticatedAppLierRoute
   '/app/loyer': typeof AuthenticatedAppLoyerRoute
   '/app/portefeuille': typeof AuthenticatedAppPortefeuilleRoute
+  '/app/profil': typeof AuthenticatedAppProfilRoute
   '/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/app/admin': typeof AuthenticatedAppAdminRoute
+  '/app/biens': typeof AuthenticatedAppBiensRoute
+  '/app/chat': typeof AuthenticatedAppChatRoute
   '/app/lier': typeof AuthenticatedAppLierRoute
   '/app/loyer': typeof AuthenticatedAppLoyerRoute
   '/app/portefeuille': typeof AuthenticatedAppPortefeuilleRoute
+  '/app/profil': typeof AuthenticatedAppProfilRoute
   '/app': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesById {
@@ -74,25 +106,52 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/app/admin': typeof AuthenticatedAppAdminRoute
+  '/_authenticated/app/biens': typeof AuthenticatedAppBiensRoute
+  '/_authenticated/app/chat': typeof AuthenticatedAppChatRoute
   '/_authenticated/app/lier': typeof AuthenticatedAppLierRoute
   '/_authenticated/app/loyer': typeof AuthenticatedAppLoyerRoute
   '/_authenticated/app/portefeuille': typeof AuthenticatedAppPortefeuilleRoute
+  '/_authenticated/app/profil': typeof AuthenticatedAppProfilRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/app/lier' | '/app/loyer' | '/app/portefeuille' | '/app/'
+    | '/'
+    | '/auth'
+    | '/app/admin'
+    | '/app/biens'
+    | '/app/chat'
+    | '/app/lier'
+    | '/app/loyer'
+    | '/app/portefeuille'
+    | '/app/profil'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/app/lier' | '/app/loyer' | '/app/portefeuille' | '/app'
+  to:
+    | '/'
+    | '/auth'
+    | '/app/admin'
+    | '/app/biens'
+    | '/app/chat'
+    | '/app/lier'
+    | '/app/loyer'
+    | '/app/portefeuille'
+    | '/app/profil'
+    | '/app'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/app/admin'
+    | '/_authenticated/app/biens'
+    | '/_authenticated/app/chat'
     | '/_authenticated/app/lier'
     | '/_authenticated/app/loyer'
     | '/_authenticated/app/portefeuille'
+    | '/_authenticated/app/profil'
     | '/_authenticated/app/'
   fileRoutesById: FileRoutesById
 }
@@ -132,6 +191,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/admin': {
+      id: '/_authenticated/app/admin'
+      path: '/app/admin'
+      fullPath: '/app/admin'
+      preLoaderRoute: typeof AuthenticatedAppAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/biens': {
+      id: '/_authenticated/app/biens'
+      path: '/app/biens'
+      fullPath: '/app/biens'
+      preLoaderRoute: typeof AuthenticatedAppBiensRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/chat': {
+      id: '/_authenticated/app/chat'
+      path: '/app/chat'
+      fullPath: '/app/chat'
+      preLoaderRoute: typeof AuthenticatedAppChatRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/lier': {
       id: '/_authenticated/app/lier'
       path: '/app/lier'
@@ -153,20 +233,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPortefeuilleRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/profil': {
+      id: '/_authenticated/app/profil'
+      path: '/app/profil'
+      fullPath: '/app/profil'
+      preLoaderRoute: typeof AuthenticatedAppProfilRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppAdminRoute: typeof AuthenticatedAppAdminRoute
+  AuthenticatedAppBiensRoute: typeof AuthenticatedAppBiensRoute
+  AuthenticatedAppChatRoute: typeof AuthenticatedAppChatRoute
   AuthenticatedAppLierRoute: typeof AuthenticatedAppLierRoute
   AuthenticatedAppLoyerRoute: typeof AuthenticatedAppLoyerRoute
   AuthenticatedAppPortefeuilleRoute: typeof AuthenticatedAppPortefeuilleRoute
+  AuthenticatedAppProfilRoute: typeof AuthenticatedAppProfilRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppAdminRoute: AuthenticatedAppAdminRoute,
+  AuthenticatedAppBiensRoute: AuthenticatedAppBiensRoute,
+  AuthenticatedAppChatRoute: AuthenticatedAppChatRoute,
   AuthenticatedAppLierRoute: AuthenticatedAppLierRoute,
   AuthenticatedAppLoyerRoute: AuthenticatedAppLoyerRoute,
   AuthenticatedAppPortefeuilleRoute: AuthenticatedAppPortefeuilleRoute,
+  AuthenticatedAppProfilRoute: AuthenticatedAppProfilRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
 }
 
@@ -181,3 +276,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
