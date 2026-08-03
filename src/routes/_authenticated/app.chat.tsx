@@ -40,19 +40,24 @@ function ChatPage() {
     queryKey: ["chat-contacts", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: rows, error } = await supabase
         .from("tenancies")
-        .select("tenant_id, landlord_id, tenant:tenant_id(id, full_name, email, phone), landlord:landlord_id(id, full_name, email, phone)")
+        .select("tenant_id, landlord_id")
         .or(`tenant_id.eq.${userId},landlord_id.eq.${userId}`)
         .eq("active", true);
       if (error) throw error;
-      const map = new Map<string, Contact>();
-      for (const row of data ?? []) {
-        const other = row.tenant_id === userId ? row.landlord : row.tenant;
-        const c = other as unknown as Contact | null;
-        if (c && c.id !== userId) map.set(c.id, c);
+      const otherIds = new Set<string>();
+      for (const row of rows ?? []) {
+        const other = row.tenant_id === userId ? row.landlord_id : row.tenant_id;
+        if (other && other !== userId) otherIds.add(other);
       }
-      return Array.from(map.values());
+      if (otherIds.size === 0) return [];
+      const { data: profs, error: perr } = await supabase
+        .from("profiles")
+        .select("id, full_name, email, phone")
+        .in("id", Array.from(otherIds));
+      if (perr) throw perr;
+      return (profs ?? []) as Contact[];
     },
   });
 
