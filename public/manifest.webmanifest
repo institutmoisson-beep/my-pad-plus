@@ -1,0 +1,27 @@
+{
+  "name": "Imo MSN — Gestion locative & portefeuille",
+  "short_name": "Imo MSN",
+  "description": "Payez votre loyer, gérez vos biens et votre portefeuille en toute sérénité.",
+  "id": "/app",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "portrait",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["finance", "business", "productivity"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/maskable-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/maskable-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Loyer", "url": "/app/loyer", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Portefeuille", "url": "/app/portefeuille", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Chat", "url": "/app/chat", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
