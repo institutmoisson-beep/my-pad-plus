@@ -12,7 +12,7 @@ export function PinPad({
   label = "Entrez votre code PIN",
 }: {
   onComplete: (pin: string) => void;
-  onBiometric?: () => void;
+  onBiometric?: (() => void) | undefined;
   busy?: boolean;
   error?: string | null;
   label?: string;
