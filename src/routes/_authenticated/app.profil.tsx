@@ -1,13 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import {
   Building2,
+  FileText,
   Fingerprint,
   KeyRound,
   Loader2,
   LogOut,
   Mail,
   Phone,
+  Shield,
   ShieldCheck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -151,6 +153,22 @@ function ProfilPage() {
           <Building2 className="size-5 text-primary" /> Devenir propriétaire
         </Button>
       )}
+
+      {roles.includes("admin") && (
+        <Link
+          to="/app/admin"
+          className="mt-4 flex h-14 w-full items-center gap-3 rounded-2xl border border-border bg-card px-4 text-base font-medium shadow-soft active:scale-[0.99]"
+        >
+          <Shield className="size-5 text-secondary" /> Administration
+        </Link>
+      )}
+
+      <Link
+        to="/app/conditions"
+        className="mt-4 flex h-14 w-full items-center gap-3 rounded-2xl border border-border bg-card px-4 text-base font-medium shadow-soft active:scale-[0.99]"
+      >
+        <FileText className="size-5 text-primary" /> Conditions d'utilisation
+      </Link>
 
       <section className="mt-6">
         <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted-foreground">Sécurité</h2>
