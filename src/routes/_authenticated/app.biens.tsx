@@ -297,7 +297,7 @@ function AssignTenantDialog({ propertyId }: { propertyId: string }) {
       <DialogContent className="rounded-3xl">
         <DialogHeader>
           <DialogTitle>Assigner un locataire</DialogTitle>
-          <DialogDescription>Recherchez un utilisateur inscrit par nom, email ou téléphone.</DialogDescription>
+          <DialogDescription>Recherchez un utilisateur inscrit par son email ou son numéro exact.</DialogDescription>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -306,7 +306,7 @@ function AssignTenantDialog({ propertyId }: { propertyId: string }) {
           }}
           className="flex gap-2"
         >
-          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Nom, email ou téléphone" />
+          <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Email ou téléphone exact" />
           <Button type="submit" className="rounded-xl"><Search className="size-4" /></Button>
         </form>
         {results.isFetching && <Loader2 className="mx-auto mt-4 size-5 animate-spin text-secondary" />}
@@ -321,7 +321,6 @@ function AssignTenantDialog({ propertyId }: { propertyId: string }) {
               >
                 <div>
                   <p className="text-sm font-semibold text-primary">{u.full_name || "Sans nom"}</p>
-                  <p className="text-[11px] text-muted-foreground">{u.email ?? u.phone}</p>
                 </div>
                 <UserPlus className="size-4 text-secondary" />
               </button>

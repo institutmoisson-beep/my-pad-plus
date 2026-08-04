@@ -8,12 +8,8 @@ export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("pin_hash")
-      .eq("id", data.user.id)
-      .maybeSingle();
-    if (profile?.pin_hash && !isUnlocked()) throw redirect({ to: "/auth" });
+    const { data: hasPin } = await supabase.rpc("has_pin");
+    if (hasPin && !isUnlocked()) throw redirect({ to: "/auth" });
     return { user: data.user };
   },
   component: () => <Outlet />,

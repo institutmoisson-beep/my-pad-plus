@@ -441,12 +441,25 @@ export type Database = {
       }
       become_landlord: { Args: never; Returns: undefined }
       claim_tenancy: { Args: { _property_id: string }; Returns: string }
+      has_pin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      list_landlord_properties: {
+        Args: { _landlord_id: string }
+        Returns: {
+          city: string
+          district: string
+          due_day: number
+          id: string
+          name: string
+          rent_amount: number
+          type: Database["public"]["Enums"]["property_type"]
+        }[]
       }
       pay_rent: {
         Args: { _amount: number; _mode?: string; _tenancy_id: string }
@@ -463,10 +476,8 @@ export type Database = {
       search_users: {
         Args: { _q: string }
         Returns: {
-          email: string
           full_name: string
           id: string
-          phone: string
         }[]
       }
       set_pin: { Args: { _pin: string }; Returns: undefined }
