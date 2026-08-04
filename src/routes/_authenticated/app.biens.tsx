@@ -13,6 +13,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { PropertyGallery } from "@/components/PropertyGallery";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -30,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth, useRoles } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { money, PROPERTY_TYPES, typeLabel } from "@/lib/format";
+import { compressImage } from "@/lib/images";
 import { playChime } from "@/lib/sound";
 
 export const Route = createFileRoute("/_authenticated/app/biens")({
@@ -215,6 +217,8 @@ function PropertyCard({ property }: { property: Property }) {
         <AssignTenantDialog propertyId={property.id} />
       </div>
 
+      <PropertyGallery photos={property.photos} title={property.name} />
+
       {expanded && (
         <div className="mt-3 space-y-2 border-t border-border pt-3">
           {(tenancies ?? []).length === 0 && (
@@ -353,12 +357,23 @@ function PropertyFormDialog({ trigger }: { trigger: React.ReactNode }) {
     mutationFn: async () => {
       const photos: string[] = [];
       if (files) {
-        for (const file of Array.from(files)) {
-          const path = `${userId}/${Date.now()}-${file.name}`;
-          const { error: upErr } = await supabase.storage.from("property-photos").upload(path, file);
-          if (upErr) throw upErr;
-          const { data } = supabase.storage.from("property-photos").getPublicUrl(path);
-          photos.push(data.publicUrl);
+        const list = Array.from(files).slice(0, 10);
+        for (const file of list) {
+          const stamp = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.webp`;
+          const fullPath = `${userId}/full/${stamp}`;
+          const thumbPathName = `${userId}/thumb/${stamp}`;
+          const [full, thumb] = await Promise.all([
+            compressImage(file, { maxSize: 1600, quality: 0.8 }),
+            compressImage(file, { maxSize: 480, quality: 0.7 }),
+          ]);
+          const opts = { contentType: "image/webp", cacheControl: "3600", upsert: false } as const;
+          const [upFull, upThumb] = await Promise.all([
+            supabase.storage.from("property-photos").upload(fullPath, full, opts),
+            supabase.storage.from("property-photos").upload(thumbPathName, thumb, opts),
+          ]);
+          if (upFull.error) throw upFull.error;
+          if (upThumb.error) throw upThumb.error;
+          photos.push(fullPath);
         }
       }
       const { error } = await supabase.from("properties").insert({

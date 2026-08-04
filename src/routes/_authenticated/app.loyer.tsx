@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { PropertyGallery } from "@/components/PropertyGallery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -76,6 +77,7 @@ type Tenancy = {
     due_day: number;
     city: string | null;
     district: string | null;
+    photos?: string[] | null;
   } | null;
 };
 
@@ -139,6 +141,11 @@ function RentCard({ tenancy }: { tenancy: Tenancy }) {
           {money(rent)}/mois
         </span>
       </header>
+
+      <PropertyGallery
+        photos={tenancy.properties?.photos ?? undefined}
+        title={tenancy.properties?.name ?? "Bien"}
+      />
 
       <div className="mt-4 space-y-2">
         <Progress value={progress} className="h-2.5" />
