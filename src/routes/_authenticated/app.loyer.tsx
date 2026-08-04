@@ -146,7 +146,6 @@ function RentCard({ tenancy }: { tenancy: Tenancy }) {
         photos={tenancy.properties?.photos ?? undefined}
         title={tenancy.properties?.name ?? "Bien"}
       />
-      </header>
 
       <div className="mt-4 space-y-2">
         <Progress value={progress} className="h-2.5" />
