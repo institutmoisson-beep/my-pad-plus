@@ -44,10 +44,9 @@ function LinkPage() {
     queryKey: ["landlord-properties", selected?.id],
     enabled: !!selected,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("properties")
-        .select("*")
-        .eq("landlord_id", selected!.id);
+      const { data, error } = await supabase.rpc("list_landlord_properties", {
+        _landlord_id: selected!.id,
+      });
       if (error) throw error;
       return data ?? [];
     },
@@ -68,7 +67,7 @@ function LinkPage() {
   });
 
   return (
-    <AppShell title="Rechercher mon propriétaire" subtitle="Par nom, email ou numéro de téléphone">
+    <AppShell title="Rechercher mon propriétaire" subtitle="Par email ou numéro de téléphone exact">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -77,7 +76,7 @@ function LinkPage() {
         }}
         className="flex gap-2"
       >
-        <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Nom, email ou téléphone" maxLength={80} />
+        <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Email ou téléphone exact" maxLength={80} />
         <Button type="submit" className="rounded-xl"><Search className="size-4" /></Button>
       </form>
 
@@ -95,7 +94,6 @@ function LinkPage() {
                 <UserCheck className="size-5 text-secondary" />
                 <div>
                   <p className="text-sm font-semibold text-primary">{u.full_name || "Sans nom"}</p>
-                  <p className="text-[11px] text-muted-foreground">{u.email ?? u.phone}</p>
                 </div>
               </button>
             </li>

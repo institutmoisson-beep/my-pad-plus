@@ -63,7 +63,11 @@ export function useProfile() {
     queryKey: ["profile", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data, error } = await supabase.from("profiles").select("*").eq("id", userId!).maybeSingle();
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, email, phone, avatar_url, biometric_enabled, biometric_credential, created_at, updated_at")
+        .eq("id", userId!)
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
