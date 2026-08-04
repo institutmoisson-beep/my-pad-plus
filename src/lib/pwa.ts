@@ -1,13 +1,5 @@
-/** Registers the PWA service worker. Call once on the client. */
-export function registerServiceWorker() {
-  if (typeof window === "undefined") return;
-  if (!("serviceWorker" in navigator)) return;
-  window.addEventListener("load", () => {
-    void navigator.serviceWorker.register("/sw.js").catch(() => {
-      // Non-fatal: app still works without offline support.
-    });
-  });
-}
+/** Home-screen installability needs no service worker. Any previously installed
+ *  worker is evicted by the kill-switch worker served at /sw.js. */
 
 export type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
