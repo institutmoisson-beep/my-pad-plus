@@ -16,6 +16,7 @@ import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppAdminRouteImport } from './routes/_authenticated/app.admin'
 import { Route as AuthenticatedAppBiensRouteImport } from './routes/_authenticated/app.biens'
 import { Route as AuthenticatedAppChatRouteImport } from './routes/_authenticated/app.chat'
+import { Route as AuthenticatedAppConditionsRouteImport } from './routes/_authenticated/app.conditions'
 import { Route as AuthenticatedAppLierRouteImport } from './routes/_authenticated/app.lier'
 import { Route as AuthenticatedAppLoyerRouteImport } from './routes/_authenticated/app.loyer'
 import { Route as AuthenticatedAppPortefeuilleRouteImport } from './routes/_authenticated/app.portefeuille'
@@ -55,6 +56,12 @@ const AuthenticatedAppChatRoute = AuthenticatedAppChatRouteImport.update({
   path: '/app/chat',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppConditionsRoute =
+  AuthenticatedAppConditionsRouteImport.update({
+    id: '/app/conditions',
+    path: '/app/conditions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppLierRoute = AuthenticatedAppLierRouteImport.update({
   id: '/app/lier',
   path: '/app/lier',
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/biens': typeof AuthenticatedAppBiensRoute
   '/app/chat': typeof AuthenticatedAppChatRoute
+  '/app/conditions': typeof AuthenticatedAppConditionsRoute
   '/app/lier': typeof AuthenticatedAppLierRoute
   '/app/loyer': typeof AuthenticatedAppLoyerRoute
   '/app/portefeuille': typeof AuthenticatedAppPortefeuilleRoute
@@ -95,6 +103,7 @@ export interface FileRoutesByTo {
   '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/biens': typeof AuthenticatedAppBiensRoute
   '/app/chat': typeof AuthenticatedAppChatRoute
+  '/app/conditions': typeof AuthenticatedAppConditionsRoute
   '/app/lier': typeof AuthenticatedAppLierRoute
   '/app/loyer': typeof AuthenticatedAppLoyerRoute
   '/app/portefeuille': typeof AuthenticatedAppPortefeuilleRoute
@@ -109,6 +118,7 @@ export interface FileRoutesById {
   '/_authenticated/app/admin': typeof AuthenticatedAppAdminRoute
   '/_authenticated/app/biens': typeof AuthenticatedAppBiensRoute
   '/_authenticated/app/chat': typeof AuthenticatedAppChatRoute
+  '/_authenticated/app/conditions': typeof AuthenticatedAppConditionsRoute
   '/_authenticated/app/lier': typeof AuthenticatedAppLierRoute
   '/_authenticated/app/loyer': typeof AuthenticatedAppLoyerRoute
   '/_authenticated/app/portefeuille': typeof AuthenticatedAppPortefeuilleRoute
@@ -123,6 +133,7 @@ export interface FileRouteTypes {
     | '/app/admin'
     | '/app/biens'
     | '/app/chat'
+    | '/app/conditions'
     | '/app/lier'
     | '/app/loyer'
     | '/app/portefeuille'
@@ -135,6 +146,7 @@ export interface FileRouteTypes {
     | '/app/admin'
     | '/app/biens'
     | '/app/chat'
+    | '/app/conditions'
     | '/app/lier'
     | '/app/loyer'
     | '/app/portefeuille'
@@ -148,6 +160,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/admin'
     | '/_authenticated/app/biens'
     | '/_authenticated/app/chat'
+    | '/_authenticated/app/conditions'
     | '/_authenticated/app/lier'
     | '/_authenticated/app/loyer'
     | '/_authenticated/app/portefeuille'
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppChatRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/conditions': {
+      id: '/_authenticated/app/conditions'
+      path: '/app/conditions'
+      fullPath: '/app/conditions'
+      preLoaderRoute: typeof AuthenticatedAppConditionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/lier': {
       id: '/_authenticated/app/lier'
       path: '/app/lier'
@@ -247,6 +267,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAdminRoute: typeof AuthenticatedAppAdminRoute
   AuthenticatedAppBiensRoute: typeof AuthenticatedAppBiensRoute
   AuthenticatedAppChatRoute: typeof AuthenticatedAppChatRoute
+  AuthenticatedAppConditionsRoute: typeof AuthenticatedAppConditionsRoute
   AuthenticatedAppLierRoute: typeof AuthenticatedAppLierRoute
   AuthenticatedAppLoyerRoute: typeof AuthenticatedAppLoyerRoute
   AuthenticatedAppPortefeuilleRoute: typeof AuthenticatedAppPortefeuilleRoute
@@ -258,6 +279,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAdminRoute: AuthenticatedAppAdminRoute,
   AuthenticatedAppBiensRoute: AuthenticatedAppBiensRoute,
   AuthenticatedAppChatRoute: AuthenticatedAppChatRoute,
+  AuthenticatedAppConditionsRoute: AuthenticatedAppConditionsRoute,
   AuthenticatedAppLierRoute: AuthenticatedAppLierRoute,
   AuthenticatedAppLoyerRoute: AuthenticatedAppLoyerRoute,
   AuthenticatedAppPortefeuilleRoute: AuthenticatedAppPortefeuilleRoute,
