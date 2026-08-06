@@ -215,6 +215,12 @@ function RentCard({ tenancy }: { tenancy: Tenancy }) {
         </TabsContent>
       </Tabs>
 
+      <RentCycles tenancyId={tenancy.id} />
+
+      <div className="mt-3">
+        <LeaseContractButton tenancyId={tenancy.id} />
+      </div>
+
       <Button variant="ghost" onClick={receipt} className="mt-3 w-full gap-2 text-xs text-muted-foreground">
         <Download className="size-3.5" /> Télécharger le reçu
       </Button>
