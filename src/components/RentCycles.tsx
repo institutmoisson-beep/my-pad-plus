@@ -148,7 +148,7 @@ function OfflineClaimDialog({
       const { error } = await supabase.rpc("declare_offline_payment", {
         _cycle_id: cycle!.id,
         _amount: value,
-        _note: note || undefined,
+        ...(note ? { _note: note } : {}),
       });
       if (error) throw error;
     },
