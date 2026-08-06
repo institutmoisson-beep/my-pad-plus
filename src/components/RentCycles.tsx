@@ -37,7 +37,7 @@ function monthLabel(period: string) {
   return new Date(period).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
 }
 
-export function RentCycles({ tenancyId }: { tenancyId: string }) {
+export function RentCycles({ tenancyId, readOnly = false }: { tenancyId: string; readOnly?: boolean }) {
   const [claimFor, setClaimFor] = useState<Cycle | null>(null);
 
   const { data: cycles, isLoading } = useQuery({
@@ -105,7 +105,7 @@ export function RentCycles({ tenancyId }: { tenancyId: string }) {
               </p>
             )}
 
-            {remaining > 0 &&
+            {remaining > 0 && !readOnly &&
               (pending ? (
                 <p className="mt-2 text-[11px] font-medium text-secondary">
                   Déclaration hors application en attente de confirmation du propriétaire.
@@ -119,6 +119,12 @@ export function RentCycles({ tenancyId }: { tenancyId: string }) {
                   <HandCoins className="size-3.5" /> J&apos;ai payé hors application
                 </Button>
               ))}
+
+            {remaining > 0 && readOnly && pending && (
+              <p className="mt-2 text-[11px] font-medium text-secondary">
+                Paiement hors application déclaré — à confirmer ci-dessus.
+              </p>
+            )}
           </div>
         );
       })}
