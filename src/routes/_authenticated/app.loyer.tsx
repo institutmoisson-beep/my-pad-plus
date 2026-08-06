@@ -5,7 +5,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { LeaseContractButton } from "@/components/LeaseContractButton";
 import { PropertyGallery } from "@/components/PropertyGallery";
+import { RentCycles } from "@/components/RentCycles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -35,6 +37,7 @@ function LoyerPage() {
     queryKey: ["my-tenancies", userId],
     enabled: !!userId,
     queryFn: async () => {
+      await supabase.rpc("refresh_my_rent");
       const { data, error } = await supabase
         .from("tenancies")
         .select("*, properties(*)")
@@ -211,6 +214,12 @@ function RentCard({ tenancy }: { tenancy: Tenancy }) {
           </Button>
         </TabsContent>
       </Tabs>
+
+      <RentCycles tenancyId={tenancy.id} />
+
+      <div className="mt-3">
+        <LeaseContractButton tenancyId={tenancy.id} />
+      </div>
 
       <Button variant="ghost" onClick={receipt} className="mt-3 w-full gap-2 text-xs text-muted-foreground">
         <Download className="size-3.5" /> Télécharger le reçu

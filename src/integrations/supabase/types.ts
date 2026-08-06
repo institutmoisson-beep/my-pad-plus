@@ -71,6 +71,62 @@ export type Database = {
         }
         Relationships: []
       }
+      lease_contracts: {
+        Row: {
+          created_at: string
+          deposit_amount: number
+          due_day: number
+          duration_months: number
+          id: string
+          landlord_id: string
+          property_id: string
+          reference: string
+          rent_amount: number
+          start_date: string
+          tenancy_id: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deposit_amount?: number
+          due_day?: number
+          duration_months?: number
+          id?: string
+          landlord_id: string
+          property_id: string
+          reference: string
+          rent_amount?: number
+          start_date?: string
+          tenancy_id: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deposit_amount?: number
+          due_day?: number
+          duration_months?: number
+          id?: string
+          landlord_id?: string
+          property_id?: string
+          reference?: string
+          rent_amount?: number
+          start_date?: string
+          tenancy_id?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lease_contracts_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: true
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           attachment_type: string | null
@@ -133,6 +189,60 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      offline_payment_claims: {
+        Row: {
+          amount: number
+          created_at: string
+          cycle_id: string
+          id: string
+          landlord_id: string
+          note: string | null
+          reviewed_at: string | null
+          status: Database["public"]["Enums"]["request_status"]
+          tenancy_id: string
+          tenant_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          cycle_id: string
+          id?: string
+          landlord_id: string
+          note?: string | null
+          reviewed_at?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          tenancy_id: string
+          tenant_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          cycle_id?: string
+          id?: string
+          landlord_id?: string
+          note?: string | null
+          reviewed_at?: string | null
+          status?: Database["public"]["Enums"]["request_status"]
+          tenancy_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offline_payment_claims_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "rent_cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offline_payment_claims_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payout_methods: {
         Row: {
@@ -244,6 +354,62 @@ export type Database = {
           type?: Database["public"]["Enums"]["property_type"]
         }
         Relationships: []
+      }
+      rent_cycles: {
+        Row: {
+          amount_due: number
+          amount_paid: number
+          created_at: string
+          due_date: string
+          formal_notice_at: string | null
+          id: string
+          landlord_id: string
+          late_notified_at: string | null
+          period: string
+          status: string
+          tenancy_id: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount_due?: number
+          amount_paid?: number
+          created_at?: string
+          due_date: string
+          formal_notice_at?: string | null
+          id?: string
+          landlord_id: string
+          late_notified_at?: string | null
+          period: string
+          status?: string
+          tenancy_id: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount_due?: number
+          amount_paid?: number
+          created_at?: string
+          due_date?: string
+          formal_notice_at?: string | null
+          id?: string
+          landlord_id?: string
+          late_notified_at?: string | null
+          period?: string
+          status?: string
+          tenancy_id?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rent_cycles_tenancy_id_fkey"
+            columns: ["tenancy_id"]
+            isOneToOne: false
+            referencedRelation: "tenancies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rent_payments: {
         Row: {
@@ -435,12 +601,25 @@ export type Database = {
         Args: { _fee_fixed: number; _fee_percent: number; _methods: Json }
         Returns: undefined
       }
+      allocate_rent: {
+        Args: { _amount: number; _tenancy_id: string }
+        Returns: number
+      }
       assign_tenant: {
         Args: { _property_id: string; _tenant_id: string }
         Returns: string
       }
       become_landlord: { Args: never; Returns: undefined }
       claim_tenancy: { Args: { _property_id: string }; Returns: string }
+      declare_offline_payment: {
+        Args: { _amount: number; _cycle_id: string; _note?: string }
+        Returns: string
+      }
+      ensure_rent_cycles: { Args: { _tenancy_id: string }; Returns: undefined }
+      generate_lease_contract: {
+        Args: { _tenancy_id: string }
+        Returns: string
+      }
       has_pin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
@@ -465,7 +644,12 @@ export type Database = {
         Args: { _amount: number; _mode?: string; _tenancy_id: string }
         Returns: string
       }
+      refresh_my_rent: { Args: never; Returns: undefined }
       review_deposit: {
+        Args: { _approve: boolean; _id: string }
+        Returns: undefined
+      }
+      review_offline_payment: {
         Args: { _approve: boolean; _id: string }
         Returns: undefined
       }
@@ -481,6 +665,7 @@ export type Database = {
         }[]
       }
       set_pin: { Args: { _pin: string }; Returns: undefined }
+      settle_arrears: { Args: { _user_id: string }; Returns: number }
       verify_pin: { Args: { _pin: string }; Returns: boolean }
     }
     Enums: {
