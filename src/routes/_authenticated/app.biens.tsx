@@ -13,7 +13,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { LeaseContractButton } from "@/components/LeaseContractButton";
+import { OfflineClaimsInbox } from "@/components/OfflineClaimsInbox";
 import { PropertyGallery } from "@/components/PropertyGallery";
+import { RentCycles } from "@/components/RentCycles";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -111,8 +114,10 @@ function BiensPage() {
 
   return (
     <AppShell title="Mes Biens" subtitle="Gérez vos propriétés et vos locataires">
+      {userId && <OfflineClaimsInbox landlordId={userId} />}
+
       <PropertyFormDialog trigger={
-        <Button className="h-12 w-full gap-2 rounded-2xl bg-gradient-sky">
+        <Button className="mt-4 h-12 w-full gap-2 rounded-2xl bg-gradient-sky">
           <Plus className="size-4" /> Ajouter un bien
         </Button>
       } />
@@ -249,6 +254,10 @@ function PropertyCard({ property }: { property: Property }) {
                     <span>{Math.round(progress)}%</span>
                   </div>
                   <Progress value={progress} className="mt-1 h-1.5" />
+                </div>
+                <RentCycles tenancyId={t.id} />
+                <div className="mt-2">
+                  <LeaseContractButton tenancyId={t.id} />
                 </div>
               </div>
             );
