@@ -145,6 +145,7 @@ function PropertyCard({ property }: { property: Property }) {
     queryKey: ["property-tenancies", property.id],
     enabled: expanded,
     queryFn: async () => {
+      await supabase.rpc("refresh_my_rent");
       const { data: rows, error } = await supabase
         .from("tenancies")
         .select("*")
@@ -255,7 +256,7 @@ function PropertyCard({ property }: { property: Property }) {
                   </div>
                   <Progress value={progress} className="mt-1 h-1.5" />
                 </div>
-                <RentCycles tenancyId={t.id} />
+                <RentCycles tenancyId={t.id} readOnly />
                 <div className="mt-2">
                   <LeaseContractButton tenancyId={t.id} />
                 </div>
