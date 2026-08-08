@@ -160,9 +160,13 @@ function DepositDialog({ methods }: { methods: Method[] }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState("");
-  const [method, setMethod] = useState(methods[0]?.name ?? "Wave");
+  const [method, setMethod] = useState<string>("");
   const [reference, setReference] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const selected = methods.find((m) => m.name === method) ?? null;
+  const amountValue = Number(amount || 0);
 
   const submit = useMutation({
     mutationFn: async () => {
@@ -175,8 +179,8 @@ function DepositDialog({ methods }: { methods: Method[] }) {
       }
       const { error } = await supabase.from("deposit_requests").insert({
         user_id: userId!,
-        amount: Number(amount),
-        method,
+        amount: amountValue,
+        method: method || "Non précisé",
         reference: reference.trim() || null,
         proof_url: proofUrl,
       });
@@ -200,40 +204,155 @@ function DepositDialog({ methods }: { methods: Method[] }) {
           <ArrowDownToLine className="size-4" /> Recharger
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[85vh] overflow-y-auto rounded-3xl">
-        <DialogHeader>
-          <DialogTitle>Recharger mon portefeuille</DialogTitle>
-          <DialogDescription>Effectuez le paiement puis envoyez la preuve.</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div className="space-y-1.5">
-            <Label>Moyen de paiement</Label>
-            <Select value={method} onValueChange={setMethod}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {methods.map((m) => (
-                  <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="rounded-xl bg-muted p-3 text-xs text-muted-foreground">
-              {methods.find((m) => m.name === method)?.details}
-            </p>
+      <DialogContent className="max-h-[88vh] gap-0 overflow-y-auto rounded-3xl p-0">
+        <div className="rounded-t-3xl bg-gradient-royal p-5 text-primary-foreground">
+          <DialogHeader className="space-y-1 text-left">
+            <DialogTitle className="text-lg font-extrabold">Recharger mon portefeuille</DialogTitle>
+            <DialogDescription className="text-primary-foreground/70">
+              Choisissez un moyen, payez, puis envoyez la preuve.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 rounded-2xl bg-primary-foreground/10 p-3">
+            <Label htmlFor="dep-amount" className="text-[11px] uppercase tracking-wide opacity-70">
+              Montant à recharger
+            </Label>
+            <div className="flex items-baseline gap-2">
+              <Input
+                id="dep-amount"
+                inputMode="numeric"
+                placeholder="0"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))}
+                className="h-11 border-0 bg-transparent px-0 text-2xl font-extrabold text-primary-foreground shadow-none placeholder:text-primary-foreground/40 focus-visible:ring-0"
+              />
+              <span className="text-sm font-semibold opacity-70">FCFA</span>
+            </div>
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="dep-amount">Montant</Label>
-            <Input id="dep-amount" inputMode="numeric" value={amount} onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))} />
+          <div className="mt-2 flex gap-2">
+            {[5000, 10000, 25000, 50000].map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setAmount(String(v))}
+                className="flex-1 rounded-xl bg-primary-foreground/10 py-1.5 text-[11px] font-semibold transition hover:bg-primary-foreground/20"
+              >
+                {v / 1000}k
+              </button>
+            ))}
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="dep-ref">Référence de transaction</Label>
-            <Input id="dep-ref" value={reference} onChange={(e) => setReference(e.target.value)} maxLength={120} />
+        </div>
+
+        <div className="space-y-5 p-5">
+          <section className="space-y-2">
+            <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              1. Moyen de paiement
+            </Label>
+            {methods.length === 0 && (
+              <p className="rounded-2xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+                Aucun moyen de paiement configuré par l&apos;administrateur pour le moment.
+              </p>
+            )}
+            <div className="grid gap-2">
+              {methods.map((m) => {
+                const active = m.name === method;
+                return (
+                  <button
+                    key={m.name}
+                    type="button"
+                    onClick={() => setMethod(m.name)}
+                    className={`flex items-center gap-3 rounded-2xl border p-3 text-left transition ${
+                      active
+                        ? "border-secondary bg-secondary/5 shadow-soft"
+                        : "border-border bg-card hover:border-secondary/50"
+                    }`}
+                  >
+                    <span
+                      className={`grid size-9 shrink-0 place-items-center rounded-xl text-xs font-bold ${
+                        active ? "bg-gradient-sky text-secondary-foreground" : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {m.name.slice(0, 2).toUpperCase()}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm font-semibold text-primary">{m.name}</span>
+                      <span className="block truncate text-[11px] text-muted-foreground">{m.details}</span>
+                    </span>
+                    {active && <Check className="size-4 shrink-0 text-secondary" />}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {selected && (
+            <section className="space-y-2">
+              <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                2. Effectuer le paiement
+              </Label>
+              <div className="rounded-2xl bg-muted p-3">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs text-muted-foreground">{selected.details}</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void navigator.clipboard.writeText(selected.details);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 1500);
+                      toast.success("Copié");
+                    }}
+                    className="shrink-0 rounded-lg p-1.5 text-muted-foreground hover:bg-background hover:text-primary"
+                    aria-label="Copier les détails"
+                  >
+                    {copied ? <Check className="size-4 text-success" /> : <Copy className="size-4" />}
+                  </button>
+                </div>
+                {selected.link && (
+                  <Button
+                    asChild
+                    className="mt-3 h-11 w-full gap-2 rounded-xl bg-gradient-sky text-secondary-foreground"
+                  >
+                    <a href={selected.link} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="size-4" /> Payer via {selected.name}
+                    </a>
+                  </Button>
+                )}
+              </div>
+            </section>
+          )}
+
+          <section className="space-y-3">
+            <Label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+              3. Preuve de paiement
+            </Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="dep-ref" className="text-xs">Référence de transaction</Label>
+              <Input id="dep-ref" value={reference} onChange={(e) => setReference(e.target.value)} maxLength={120} />
+            </div>
+            <label
+              htmlFor="dep-file"
+              className="flex cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-border bg-card p-3.5 transition hover:border-secondary"
+            >
+              <ImageUp className="size-5 text-secondary" />
+              <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
+                {file ? file.name : "Ajouter une capture d'écran"}
+              </span>
+            </label>
+            <Input
+              id="dep-file"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            />
+          </section>
+
+          <div className="flex items-center justify-between rounded-2xl bg-muted p-3 text-xs">
+            <span className="text-muted-foreground">Total à créditer</span>
+            <b className="text-primary">{money(amountValue)}</b>
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="dep-file">Capture d&apos;écran</Label>
-            <Input id="dep-file" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-          </div>
+
           <Button
-            disabled={!amount || submit.isPending}
+            disabled={!amountValue || !method || submit.isPending}
             onClick={() => submit.mutate()}
             className="h-12 w-full rounded-2xl"
           >
