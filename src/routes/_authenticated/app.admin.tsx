@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
+import { ProofViewer } from "@/components/ProofViewer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -131,16 +132,7 @@ function DepositsPanel() {
               </div>
               <StatusBadge status={d.status} />
             </div>
-            {d.proof_url && (
-              <a
-                href={supabase.storage.from("deposit-proofs").getPublicUrl(d.proof_url).data.publicUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-1 inline-block text-xs text-secondary underline"
-              >
-                Voir la preuve
-              </a>
-            )}
+            {d.proof_url && <ProofViewer path={d.proof_url} />}
             {d.status === "pending" && (
               <div className="mt-2 flex gap-2">
                 <Button
