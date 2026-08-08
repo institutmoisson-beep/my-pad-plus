@@ -3,6 +3,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   Building2,
   CheckCircle2,
+  EyeOff,
   Home,
   Loader2,
   Receipt,
@@ -15,6 +16,7 @@ import { AppShell } from "@/components/AppShell";
 import { StatCard } from "@/components/StatCard";
 import { Button } from "@/components/ui/button";
 import { useAuth, useProfile, useRoles, useWallet } from "@/hooks/useAuth";
+import { useHideBalance } from "@/hooks/useHideBalance";
 import { supabase } from "@/integrations/supabase/client";
 import { money } from "@/lib/format";
 
@@ -35,6 +37,7 @@ function HomePage() {
   const { data: profile } = useProfile();
   const { data: roles = [] } = useRoles();
   const { data: wallet } = useWallet();
+  const { hidden, toggle, mask } = useHideBalance();
 
   const isLandlord = roles.includes("landlord");
   const isTenant = roles.includes("tenant");
