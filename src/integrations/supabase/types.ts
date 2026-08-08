@@ -620,6 +620,16 @@ export type Database = {
         Args: { _tenancy_id: string }
         Returns: string
       }
+      get_app_settings: {
+        Args: never
+        Returns: {
+          currency: string
+          id: number
+          payment_methods: Json
+          withdrawal_fee_fixed: number
+          withdrawal_fee_percent: number
+        }[]
+      }
       has_pin: { Args: never; Returns: boolean }
       has_role: {
         Args: {

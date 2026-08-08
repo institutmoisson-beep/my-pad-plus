@@ -91,9 +91,9 @@ export function useSettings() {
   return useQuery({
     queryKey: ["app_settings"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("app_settings").select("*").eq("id", 1).maybeSingle();
+      const { data, error } = await supabase.rpc("get_app_settings");
       if (error) throw error;
-      return data;
+      return (data ?? [])[0] ?? null;
     },
   });
 }
