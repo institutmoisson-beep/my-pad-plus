@@ -281,6 +281,16 @@ function SettingsPanel() {
   const [fixed, setFixed] = useState(String(settings?.withdrawal_fee_fixed ?? 0));
   const [newName, setNewName] = useState("");
   const [newDetails, setNewDetails] = useState("");
+  const [newLink, setNewLink] = useState("");
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    if (hydrated || !settings) return;
+    setMethods(((settings.payment_methods ?? []) as unknown as Method[]) ?? []);
+    setPercent(String(settings.withdrawal_fee_percent ?? 1.5));
+    setFixed(String(settings.withdrawal_fee_fixed ?? 0));
+    setHydrated(true);
+  }, [settings, hydrated]);
 
   const save = useMutation({
     mutationFn: async () => {
@@ -307,9 +317,14 @@ function SettingsPanel() {
         <div className="space-y-2">
           {methods.map((m, i) => (
             <div key={`${m.name}-${i}`} className="flex items-center justify-between rounded-2xl bg-card p-3 shadow-soft">
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm font-semibold text-primary">{m.name}</p>
                 <p className="text-[11px] text-muted-foreground">{m.details}</p>
+                {m.link && (
+                  <p className="mt-0.5 flex items-center gap-1 truncate text-[11px] text-secondary">
+                    <ExternalLink className="size-3 shrink-0" /> {m.link}
+                  </p>
+                )}
               </div>
               <button
                 type="button"
@@ -324,14 +339,24 @@ function SettingsPanel() {
         <div className="mt-3 space-y-2 rounded-2xl bg-muted p-3">
           <Input placeholder="Nom (ex: Wave)" value={newName} onChange={(e) => setNewName(e.target.value)} />
           <Input placeholder="Détails (numéro, IBAN...)" value={newDetails} onChange={(e) => setNewDetails(e.target.value)} />
+          <Input
+            placeholder="Lien de paiement (facultatif, https://...)"
+            value={newLink}
+            onChange={(e) => setNewLink(e.target.value)}
+          />
           <Button
             variant="outline"
             className="w-full gap-1.5 rounded-xl"
             disabled={!newName || !newDetails}
             onClick={() => {
-              setMethods((prev) => [...prev, { name: newName, details: newDetails }]);
+              const link = newLink.trim();
+              setMethods((prev) => [
+                ...prev,
+                { name: newName.trim(), details: newDetails.trim(), ...(link ? { link } : {}) },
+              ]);
               setNewName("");
               setNewDetails("");
+              setNewLink("");
             }}
           >
             <Plus className="size-4" /> Ajouter un moyen
