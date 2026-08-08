@@ -6,6 +6,8 @@ import {
   Check,
   Copy,
   ExternalLink,
+  Eye,
+  EyeOff,
   ImageUp,
   Loader2,
   Wallet,
@@ -29,6 +31,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth, useRoles, useSettings, useWallet } from "@/hooks/useAuth";
+import { useHideBalance } from "@/hooks/useHideBalance";
 import { supabase } from "@/integrations/supabase/client";
 import { money } from "@/lib/format";
 
@@ -51,6 +54,7 @@ function WalletPage() {
   const { data: wallet } = useWallet();
   const { data: roles = [] } = useRoles();
   const { data: settings } = useSettings();
+  const { hidden, toggle, mask } = useHideBalance();
   const methods = (settings?.payment_methods ?? []) as unknown as Method[];
 
   const { data: transactions, isLoading } = useQuery({
@@ -82,10 +86,20 @@ function WalletPage() {
   return (
     <AppShell title="Portefeuille">
       <div className="rounded-3xl bg-gradient-royal p-6 text-primary-foreground shadow-soft">
-        <div className="flex items-center gap-2 text-xs opacity-80">
-          <Wallet className="size-4" /> Solde Imo Wallet
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs opacity-80">
+            <Wallet className="size-4" /> Solde Imo Wallet
+          </div>
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={hidden ? "Afficher le solde" : "Masquer le solde"}
+            className="rounded-xl p-1.5 opacity-80 transition hover:bg-primary-foreground/10 hover:opacity-100"
+          >
+            {hidden ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          </button>
         </div>
-        <p className="mt-2 text-3xl font-extrabold tracking-tight">{money(wallet?.balance)}</p>
+        <p className="mt-2 text-3xl font-extrabold tracking-tight">{mask(money(wallet?.balance))}</p>
         <div className="mt-5 flex gap-2">
           <DepositDialog methods={methods} />
           {roles.includes("landlord") && <WithdrawDialog balance={Number(wallet?.balance ?? 0)} />}
