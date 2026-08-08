@@ -286,7 +286,7 @@ function SettingsPanel() {
 
   useEffect(() => {
     if (hydrated || !settings) return;
-    setMethods(((settings.payment_methods ?? []) as unknown as Method[]) ?? []);
+    setMethods((settings.payment_methods ?? []) as unknown as Method[]);
     setPercent(String(settings.withdrawal_fee_percent ?? 1.5));
     setFixed(String(settings.withdrawal_fee_fixed ?? 0));
     setHydrated(true);
