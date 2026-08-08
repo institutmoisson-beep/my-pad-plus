@@ -69,7 +69,9 @@ function HomePage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <StatCard label="Solde Imo Wallet" value={money(wallet?.balance)} icon={Wallet} tone="navy" />
+        <button type="button" onClick={toggle} className="text-left" aria-label={hidden ? "Afficher le solde" : "Masquer le solde"}>
+          <StatCard label="Solde Imo Wallet" value={mask(money(wallet?.balance))} icon={hidden ? EyeOff : Wallet} tone="navy" />
+        </button>
         {isTenant ? (
           <StatCard label="Reste à payer" value={money(dueTotal)} icon={Receipt} tone="sky" />
         ) : (
