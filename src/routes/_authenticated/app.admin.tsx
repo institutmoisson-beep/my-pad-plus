@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Check, Loader2, Plus, Settings, Trash2, Users, X } from "lucide-react";
-import { useState } from "react";
+import { Check, ExternalLink, Loader2, Plus, Settings, Trash2, Users, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/app/admin")({
   component: AdminPage,
 });
 
-type Method = { name: string; details: string };
+type Method = { name: string; details: string; link?: string };
 
 /** Attaches each row's requester profile by fetching profiles separately —
  * user_id columns reference auth.users, not public.profiles, so PostgREST
