@@ -62,9 +62,11 @@ function UnlockPanel() {
 
   useEffect(() => {
     void (async () => {
-      const { data } = await supabase.from("profiles").select("biometric_enabled, biometric_credential").maybeSingle();
-      const cred = data?.biometric_credential as { rawId?: string } | null;
-      if (data?.biometric_enabled && cred?.rawId) setCredId(cred.rawId);
+      const { data } = await supabase.from("profiles").select("biometric_enabled").maybeSingle();
+      if (!data?.biometric_enabled) return;
+      const { data: bio } = await supabase.rpc("get_my_biometric");
+      const cred = bio as { rawId?: string } | null;
+      if (cred?.rawId) setCredId(cred.rawId);
     })();
   }, []);
 
