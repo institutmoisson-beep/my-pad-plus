@@ -1,6 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDownToLine, ArrowUpFromLine, Loader2, Wallet } from "lucide-react";
+import {
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Check,
+  Copy,
+  ExternalLink,
+  ImageUp,
+  Loader2,
+  Wallet,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -35,7 +44,7 @@ export const Route = createFileRoute("/_authenticated/app/portefeuille")({
   component: WalletPage,
 });
 
-type Method = { name: string; details: string };
+type Method = { name: string; details: string; link?: string };
 
 function WalletPage() {
   const { userId } = useAuth();
