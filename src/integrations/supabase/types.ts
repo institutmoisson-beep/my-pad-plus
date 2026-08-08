@@ -630,6 +630,7 @@ export type Database = {
           withdrawal_fee_percent: number
         }[]
       }
+      get_my_biometric: { Args: never; Returns: Json }
       has_pin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
