@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { Check, ExternalLink, Loader2, Plus, Settings, Trash2, Users, X } from "lucide-react";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { Activity, Check, ExternalLink, Loader2, Plus, Settings, Trash2, Users, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -64,6 +64,15 @@ function AdminPage() {
 
   return (
     <AppShell title="Administration" subtitle="Demandes, utilisateurs et configuration">
+      <Link
+        to="/app/activite"
+        className="mb-4 flex items-center justify-between rounded-2xl bg-gradient-royal p-4 text-primary-foreground shadow-soft"
+      >
+        <span className="flex items-center gap-2 text-sm font-bold">
+          <Activity className="size-4" /> Activité en direct
+        </span>
+        <span className="text-xs opacity-80">Connectés, pages, actions →</span>
+      </Link>
       <Tabs defaultValue="deposits">
         <TabsList className="grid w-full grid-cols-4 rounded-2xl bg-muted p-1">
           <TabsTrigger value="deposits" className="rounded-xl text-[11px]">Recharges</TabsTrigger>

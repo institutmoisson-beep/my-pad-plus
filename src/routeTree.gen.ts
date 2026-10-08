@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
+import { Route as AuthenticatedAppActiviteRouteImport } from './routes/_authenticated/app.activite'
 import { Route as AuthenticatedAppAdminRouteImport } from './routes/_authenticated/app.admin'
 import { Route as AuthenticatedAppBiensRouteImport } from './routes/_authenticated/app.biens'
 import { Route as AuthenticatedAppChatRouteImport } from './routes/_authenticated/app.chat'
@@ -41,6 +42,12 @@ const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   path: '/app/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppActiviteRoute =
+  AuthenticatedAppActiviteRouteImport.update({
+    id: '/app/activite',
+    path: '/app/activite',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppAdminRoute = AuthenticatedAppAdminRouteImport.update({
   id: '/app/admin',
   path: '/app/admin',
@@ -87,6 +94,7 @@ const AuthenticatedAppProfilRoute = AuthenticatedAppProfilRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/app/activite': typeof AuthenticatedAppActiviteRoute
   '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/biens': typeof AuthenticatedAppBiensRoute
   '/app/chat': typeof AuthenticatedAppChatRoute
@@ -100,6 +108,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/app/activite': typeof AuthenticatedAppActiviteRoute
   '/app/admin': typeof AuthenticatedAppAdminRoute
   '/app/biens': typeof AuthenticatedAppBiensRoute
   '/app/chat': typeof AuthenticatedAppChatRoute
@@ -115,6 +124,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/app/activite': typeof AuthenticatedAppActiviteRoute
   '/_authenticated/app/admin': typeof AuthenticatedAppAdminRoute
   '/_authenticated/app/biens': typeof AuthenticatedAppBiensRoute
   '/_authenticated/app/chat': typeof AuthenticatedAppChatRoute
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/app/activite'
     | '/app/admin'
     | '/app/biens'
     | '/app/chat'
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/app/activite'
     | '/app/admin'
     | '/app/biens'
     | '/app/chat'
@@ -157,6 +169,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/app/activite'
     | '/_authenticated/app/admin'
     | '/_authenticated/app/biens'
     | '/_authenticated/app/chat'
@@ -202,6 +215,13 @@ declare module '@tanstack/react-router' {
       path: '/app'
       fullPath: '/app/'
       preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/activite': {
+      id: '/_authenticated/app/activite'
+      path: '/app/activite'
+      fullPath: '/app/activite'
+      preLoaderRoute: typeof AuthenticatedAppActiviteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/admin': {
@@ -264,6 +284,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppActiviteRoute: typeof AuthenticatedAppActiviteRoute
   AuthenticatedAppAdminRoute: typeof AuthenticatedAppAdminRoute
   AuthenticatedAppBiensRoute: typeof AuthenticatedAppBiensRoute
   AuthenticatedAppChatRoute: typeof AuthenticatedAppChatRoute
@@ -276,6 +297,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppActiviteRoute: AuthenticatedAppActiviteRoute,
   AuthenticatedAppAdminRoute: AuthenticatedAppAdminRoute,
   AuthenticatedAppBiensRoute: AuthenticatedAppBiensRoute,
   AuthenticatedAppChatRoute: AuthenticatedAppChatRoute,
