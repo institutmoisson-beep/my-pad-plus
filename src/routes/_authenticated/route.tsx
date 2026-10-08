@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
+import { ActivityTracker } from "@/components/ActivityTracker";
 import { supabase } from "@/integrations/supabase/client";
 import { isUnlocked } from "@/lib/lock";
 
@@ -12,5 +13,10 @@ export const Route = createFileRoute("/_authenticated")({
     if (hasPin && !isUnlocked()) throw redirect({ to: "/auth" });
     return { user: data.user };
   },
-  component: () => <Outlet />,
+  component: () => (
+    <>
+      <ActivityTracker />
+      <Outlet />
+    </>
+  ),
 });
