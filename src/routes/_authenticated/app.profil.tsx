@@ -76,17 +76,11 @@ function ProfilPage() {
     try {
       if (checked) {
         const cred = await registerBiometric(profile.id, profile.full_name);
-        const { error } = await supabase
-          .from("profiles")
-          .update({ biometric_enabled: true, biometric_credential: cred })
-          .eq("id", profile.id);
+        const { error } = await supabase.rpc("set_my_biometric", { _cred: cred as never });
         if (error) throw error;
         toast.success("Empreinte digitale activée");
       } else {
-        const { error } = await supabase
-          .from("profiles")
-          .update({ biometric_enabled: false, biometric_credential: null })
-          .eq("id", profile.id);
+        const { error } = await supabase.rpc("set_my_biometric", { _cred: null as never });
         if (error) throw error;
         toast.success("Empreinte digitale désactivée");
       }

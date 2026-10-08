@@ -62,8 +62,8 @@ function UnlockPanel() {
 
   useEffect(() => {
     void (async () => {
-      const { data } = await supabase.from("profiles").select("biometric_enabled").maybeSingle();
-      if (!data?.biometric_enabled) return;
+      // Read our own credential directly (a profile query without a filter can
+      // return several rows for landlords and silently fail).
       const { data: bio } = await supabase.rpc("get_my_biometric");
       const cred = bio as { rawId?: string } | null;
       if (cred?.rawId) setCredId(cred.rawId);
@@ -91,16 +91,32 @@ function UnlockPanel() {
     if (!credId) return;
     try {
       setBusy(true);
-      await verifyBiometric(credId);
+      setError(null);
+      const ok = await verifyBiometric(credId);
+      if (!ok) throw new Error("no assertion");
       unlock();
       playChime("success");
       void navigate({ to: "/app", replace: true });
-    } catch {
-      setError("Empreinte non reconnue");
+    } catch (e) {
+      const name = e instanceof Error ? e.name : "";
+      setError(
+        name === "NotAllowedError"
+          ? "Empreinte annulée ou non reconnue"
+          : name === "SecurityError"
+            ? "Ouvrez l'application installée (pas l'aperçu) pour utiliser l'empreinte"
+            : "Empreinte non reconnue — réactivez-la dans votre profil",
+      );
     } finally {
       setBusy(false);
     }
   }
+
+  // Launch the fingerprint prompt automatically once the credential is known.
+  useEffect(() => {
+    if (credId) void handleBiometric();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [credId]);
+
 
   return (
     <div className="space-y-8">
@@ -145,10 +161,11 @@ function CredentialsPanel() {
     unlock();
     playChime("success");
     const available = await platformAuthenticatorAvailable();
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("id, full_name, biometric_enabled")
-      .maybeSingle();
+    const { data: userData } = await supabase.auth.getUser();
+    const uid = userData.user?.id;
+    const { data: profile } = uid
+      ? await supabase.from("profiles").select("id, full_name, biometric_enabled").eq("id", uid).maybeSingle()
+      : { data: null };
     if (available && profile && !profile.biometric_enabled) {
       const wants = window.confirm(
         "Activer la connexion par empreinte digitale pour vos prochains accès ?",
@@ -156,10 +173,8 @@ function CredentialsPanel() {
       if (wants) {
         try {
           const cred = await registerBiometric(profile.id, profile.full_name);
-          await supabase
-            .from("profiles")
-            .update({ biometric_enabled: true, biometric_credential: cred })
-            .eq("id", profile.id);
+          const { error } = await supabase.rpc("set_my_biometric", { _cred: cred as never });
+          if (error) throw error;
           toast.success("Empreinte digitale activée");
         } catch {
           toast.error("Activation biométrique annulée");
